@@ -468,6 +468,28 @@ void Binder::visitTemplateDeclaration(TemplateDeclarationAST *node)
 
 void Binder::visitTypedef(TypedefAST *node)
 {
+    TypeSpecifierAST *typespec = node->type_specifier;
+    if (typespec->kind == AST::Kind_EnumSpecifier)
+    {
+        EnumSpecifierAST *enumspec = reinterpret_cast<EnumSpecifierAST*>(typespec);
+        name_cc.run(enumspec->name);
+        QString name = name_cc.name();
+        if (!name.isEmpty())
+        {
+            visitEnumSpecifier(enumspec);
+        }
+    }
+    else if (typespec->kind == AST::Kind_ClassSpecifier)
+    {
+        ClassSpecifierAST *classspec = reinterpret_cast<ClassSpecifierAST*>(typespec);
+        name_cc.run(classspec->name);
+        QString name = name_cc.name();
+        if (!name.isEmpty())
+        {
+            visitClassSpecifier(classspec);
+        }
+    }
+
     const ListNode<InitDeclaratorAST*> *it = node->init_declarators;
     if (!it)
         return;
