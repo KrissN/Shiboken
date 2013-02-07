@@ -1234,6 +1234,20 @@ AbstractMetaClass* AbstractMetaBuilder::currentTraversedClass(ScopeModelItem ite
     AbstractMetaClass* metaClass = m_metaClasses.findClass(fullClassName);
     if (!metaClass)
         metaClass = m_templates.findClass(fullClassName);
+
+    if (!metaClass)
+    {
+        ClassModelItem classItem = model_dynamic_cast<ClassModelItem>(item);
+        if (classItem)
+        {
+            ComplexTypeEntry* type = findParentTypeAlias(classItem);
+            if (type)
+            {
+                metaClass = m_metaClasses.findClass(type->name());
+            }
+        }
+    }
+
     return metaClass;
 }
 
