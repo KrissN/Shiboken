@@ -1061,6 +1061,28 @@ AbstractMetaClass* AbstractMetaBuilder::traverseTypeAlias(TypeAliasModelItem typ
     return metaClass;
 }
 
+ComplexTypeEntry* AbstractMetaBuilder::findParentTypeAlias(ClassModelItem classItem)
+{
+    foreach (const TypeAliasModelItem tmi, m_dom->typeAliases())
+    {
+        CodeModelItem specItem = tmi->specifier();
+        if (specItem)
+        {
+            ClassModelItem cmi = model_dynamic_cast<ClassModelItem>(specItem);
+            if (cmi == classItem)
+            {
+                ComplexTypeEntry* type = TypeDatabase::instance()->findComplexType(tmi->name());
+                if (type)
+                {
+                    return type;
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+
 AbstractMetaClass* AbstractMetaBuilder::traverseClass(ClassModelItem classItem)
 {
     QString className = stripTemplateArgs(classItem->name());
