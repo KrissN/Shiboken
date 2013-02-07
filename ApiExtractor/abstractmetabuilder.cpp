@@ -1046,6 +1046,14 @@ AbstractMetaClass* AbstractMetaBuilder::traverseTypeAlias(TypeAliasModelItem typ
     if (type->isObject())
         static_cast<ObjectTypeEntry *>(type)->setQObject(isQObject(stripTemplateArgs(typeAlias->type().qualifiedName().join("::"))));
 
+    CodeModelItem mi = typeAlias->specifier();
+    if (mi)
+    {
+        /* The type alias has a specifier. Don't add the type alias as the name will be
+         * used when registering the underlying class or enum. */
+        return 0;
+    }
+
     AbstractMetaClass *metaClass = createMetaClass();
     metaClass->setTypeAlias(true);
     metaClass->setTypeEntry(type);
