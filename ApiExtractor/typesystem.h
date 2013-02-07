@@ -986,6 +986,30 @@ private:
 typedef QHash<QString, QList<TypeEntry *> > TypeEntryHash;
 typedef QHash<QString, TypeEntry *> SingleTypeEntryHash;
 
+inline QDebug operator<<(QDebug qDbg, const TypeEntry* pTe)
+{
+    static const char* pEntryTypes[] = { "PrimitiveType", "VoidType", "VarargsType", "FlagsType",
+        "EnumType", "EnumValue", "TemplateArgumentType", "ThreadType", "BasicValueType", "StringType",
+        "ContainerType", "InterfaceType", "ObjectType", "NamespaceType", "VariantType", "JObjectWrapperType",
+        "CharType", "ArrayType", "TypeSystemType", "CustomType", "TargetLangType", "FunctionType" };
+
+    int type = (int)pTe->type();
+    QString typeString;
+    if (type < (int)(sizeof(pEntryTypes) / sizeof(pEntryTypes[0])))
+        typeString = pEntryTypes[type];
+    else
+        typeString = QString("<unknown %1>").arg(type);
+
+    QStringList attrs;
+    if (pTe->isComplex())
+        attrs << "cplx";
+    if (pTe->isPrimitive())
+        attrs << "prim";
+
+    qDbg.nospace() << "TypeEntry(" << typeString << "," << attrs.join(":") << ")";
+    return qDbg;
+}
+
 
 class TypeSystemTypeEntry : public TypeEntry
 {
