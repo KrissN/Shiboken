@@ -236,6 +236,7 @@ class _CodeModelItem: public QSharedData
 public:
     enum Kind {
         /* These are bit-flags resembling inheritance */
+        Kind_Code = 0x0,
         Kind_Scope = 0x1,
         Kind_Namespace = 0x2 | Kind_Scope,
         Kind_Member = 0x4,
@@ -254,6 +255,7 @@ public:
         Kind_TypeAlias = 8 << FirstKind,
         Kind_Variable = 9 << FirstKind | Kind_Member
     };
+    DECLARE_MODEL_NODE(Code)
 
 public:
     virtual ~_CodeModelItem();
