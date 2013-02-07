@@ -469,6 +469,7 @@ void Binder::visitTemplateDeclaration(TemplateDeclarationAST *node)
 void Binder::visitTypedef(TypedefAST *node)
 {
     TypeSpecifierAST *typespec = node->type_specifier;
+    CodeModelItem specifierItem;
     if (typespec->kind == AST::Kind_EnumSpecifier)
     {
         EnumSpecifierAST *enumspec = reinterpret_cast<EnumSpecifierAST*>(typespec);
@@ -482,12 +483,7 @@ void Binder::visitTypedef(TypedefAST *node)
     else if (typespec->kind == AST::Kind_ClassSpecifier)
     {
         ClassSpecifierAST *classspec = reinterpret_cast<ClassSpecifierAST*>(typespec);
-        name_cc.run(classspec->name);
-        QString name = name_cc.name();
-        if (!name.isEmpty())
-        {
-            visitClassSpecifier(classspec);
-        }
+        specifierItem = model_dynamic_cast<CodeModelItem>(visitClassSpecifierAndReturn(classspec));
     }
 
     const ListNode<InitDeclaratorAST*> *it = node->init_declarators;
@@ -543,6 +539,8 @@ void Binder::visitTypedef(TypedefAST *node)
         typeAlias->setName(alias_name);
         typeAlias->setType(qualifyType(typeInfo, currentScope()->qualifiedName()));
         typeAlias->setScope(typedefScope->qualifiedName());
+        if (specifierItem)
+            typeAlias->setSpecifier(specifierItem);
         _M_qualified_types[typeAlias->qualifiedName().join(".")] = QString();
         currentScope()->addTypeAlias(typeAlias);
     } while (it != end);
@@ -599,7 +597,7 @@ void Binder::visitForwardDeclarationSpecifier(ForwardDeclarationSpecifierAST *no
     _M_qualified_types[(scope->qualifiedName() + name_cc.qualifiedName()).join(".")] = QString();
 }
 
-void Binder::visitClassSpecifier(ClassSpecifierAST *node)
+ClassModelItem Binder::visitClassSpecifierAndReturn(ClassSpecifierAST *node)
 {
     ClassCompiler class_cc(this);
     class_cc.run(node);
@@ -658,6 +656,13 @@ void Binder::visitClassSpecifier(ClassSpecifierAST *node)
     changeCurrentClass(old);
     changeCurrentAccess(oldAccessPolicy);
     changeCurrentFunctionType(oldFunctionType);
+
+    return classItem;
+}
+
+void Binder::visitClassSpecifier(ClassSpecifierAST *node)
+{
+    visitClassSpecifierAndReturn(node);
 }
 
 void Binder::visitLinkageSpecification(LinkageSpecificationAST *node)

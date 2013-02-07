@@ -98,6 +98,8 @@ private:
 
     void updateItemPosition(CodeModelItem item, AST *node);
 
+    ClassModelItem visitClassSpecifierAndReturn(ClassSpecifierAST *);
+
 private:
     CodeModel *_M_model;
     LocationManager &_M_location;
