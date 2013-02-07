@@ -34,6 +34,7 @@
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QVector>
+#include <QtCore/QDebug>
 
 #define DECLARE_MODEL_NODE(k) \
     enum { __node_kind = Kind_##k }; \
@@ -316,6 +317,12 @@ private:
     void operator = (const _CodeModelItem &other);
 };
 
+inline QDebug operator<<(QDebug qDbg, const CodeModelItem& cmi)
+{
+    qDbg.nospace() << "CodeModelItem(" << cmi->name() << ")";
+    return qDbg;
+}
+
 class _ScopeModelItem: public _CodeModelItem
 {
 public:
@@ -447,6 +454,13 @@ private:
     _ClassModelItem(const _ClassModelItem &other);
     void operator = (const _ClassModelItem &other);
 };
+
+inline QDebug operator<<(QDebug qDbg, const ClassModelItem& cmi)
+{
+    qDbg.nospace() << "ClassModelItem(" << cmi->name() << ")";
+    return qDbg;
+}
+
 
 class _NamespaceModelItem: public _ScopeModelItem
 {
@@ -721,6 +735,15 @@ private:
     _TypeAliasModelItem(const _TypeAliasModelItem &other);
     void operator = (const _TypeAliasModelItem &other);
 };
+
+inline QDebug operator<<(QDebug qDbg, const TypeAliasModelItem& cmi)
+{
+    if (cmi->specifier())
+        qDbg.nospace() << "TypeAliasModelItem(" << cmi->name() << "," << cmi->specifier() << ")";
+    else
+        qDbg.nospace() << "TypeAliasModelItem(" << cmi->name() << ", null)";
+    return qDbg;
+}
 
 class _EnumModelItem: public _CodeModelItem
 {
