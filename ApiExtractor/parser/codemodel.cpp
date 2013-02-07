@@ -701,6 +701,16 @@ void _TypeAliasModelItem::setType(const TypeInfo &type)
     _M_type = type;
 }
 
+CodeModelItem _TypeAliasModelItem::specifier() const
+{
+    return _M_specifier;
+}
+
+void _TypeAliasModelItem::setSpecifier(CodeModelItem item)
+{
+    _M_specifier = item;
+}
+
 // ---------------------------------------------------------------------------
 CodeModel::AccessPolicy _EnumModelItem::accessPolicy() const
 {

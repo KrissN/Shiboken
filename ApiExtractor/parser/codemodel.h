@@ -723,6 +723,8 @@ public:
 public:
     TypeInfo type() const;
     void setType(const TypeInfo &type);
+    CodeModelItem specifier() const;
+    void setSpecifier(CodeModelItem item);
 
 protected:
     _TypeAliasModelItem(CodeModel *model, int kind = __node_kind)
@@ -730,6 +732,7 @@ protected:
 
 private:
     TypeInfo _M_type;
+    CodeModelItem _M_specifier;
 
 private:
     _TypeAliasModelItem(const _TypeAliasModelItem &other);
