@@ -1113,8 +1113,16 @@ AbstractMetaClass* AbstractMetaBuilder::traverseClass(ClassModelItem classItem)
         TypeEntry *te = TypeDatabase::instance()->findType(fullClassName);
         if (te && !te->isComplex())
             reason = RedefinedToNotClass;
-        else
-            reason = NotInTypeSystem;
+        else {
+            /* The class is not in the typesystem, but it may be referenced by a typedef.
+             * Try to find a typedef that has this class as specifier and check if it's in
+             * the typesystem. */
+            type = findParentTypeAlias(classItem);
+            if (!type)
+            {
+                reason = NotInTypeSystem;
+            }
+        }
     } else if (type->codeGeneration() == TypeEntry::GenerateNothing) {
         reason = GenerationDisabled;
     }
