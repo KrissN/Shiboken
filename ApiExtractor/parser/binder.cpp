@@ -602,18 +602,23 @@ ClassModelItem Binder::visitClassSpecifierAndReturn(ClassSpecifierAST *node)
     ClassCompiler class_cc(this);
     class_cc.run(node);
 
-    if (class_cc.name().isEmpty()) {
-        // anonymous not supported
-        return;
-    }
+    QString name = class_cc.name();
 
-    Q_ASSERT(node->name && node->name->unqualified_name);
+    bool isAnonymous = name.isEmpty();
+    if (isAnonymous) {
+        // anonymous class (most likely a struct inside a typedef)
+        QString key = _M_context.join("::");
+        int current = ++_M_anonymous_classes[key];
+        name += QLatin1String("__anonymous_class_");
+        name += QString::number(current);
+    }
 
     ScopeModelItem scope = currentScope();
 
     ClassModelItem old = changeCurrentClass(_M_model->create<ClassModelItem>());
+    ClassModelItem classItem = _M_current_class;
     updateItemPosition(_M_current_class->toItem(), node);
-    _M_current_class->setName(class_cc.name());
+    _M_current_class->setName(name);
 
     QStringList baseClasses = class_cc.baseClasses();
     TypeInfo info;
@@ -648,8 +653,14 @@ ClassModelItem Binder::visitClassSpecifierAndReturn(ClassSpecifierAST *node)
 
     scope->addClass(_M_current_class);
 
-    name_cc.run(node->name->unqualified_name);
-    _M_context.append(name_cc.name());
+    QString unqName;
+    if (class_cc.name().isEmpty())
+        unqName = name;
+    else {
+        name_cc.run(node->name->unqualified_name);
+        unqName = name_cc.name();
+    }
+    _M_context.append(unqName);
     visitNodes(this, node->member_specs);
     _M_context.removeLast();
 
