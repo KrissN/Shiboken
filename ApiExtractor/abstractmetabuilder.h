@@ -236,7 +236,7 @@ private:
     void setInclude(TypeEntry* te, const QString& fileName) const;
     void fixArgumentNames(AbstractMetaFunction* func);
     void fillAddedFunctions(AbstractMetaClass* metaClass);
-    ComplexTypeEntry* findParentTypeAlias(ClassModelItem classItem);
+    ComplexTypeEntry* findParentClassTypeAlias(ClassModelItem classItem);
 
     AbstractMetaClassList m_metaClasses;
     AbstractMetaClassList m_templates;

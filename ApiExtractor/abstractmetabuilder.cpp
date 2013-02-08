@@ -1069,7 +1069,7 @@ AbstractMetaClass* AbstractMetaBuilder::traverseTypeAlias(TypeAliasModelItem typ
     return metaClass;
 }
 
-ComplexTypeEntry* AbstractMetaBuilder::findParentTypeAlias(ClassModelItem classItem)
+ComplexTypeEntry* AbstractMetaBuilder::findParentClassTypeAlias(ClassModelItem classItem)
 {
     foreach (const TypeAliasModelItem tmi, m_dom->typeAliases())
     {
@@ -1125,7 +1125,7 @@ AbstractMetaClass* AbstractMetaBuilder::traverseClass(ClassModelItem classItem)
             /* The class is not in the typesystem, but it may be referenced by a typedef.
              * Try to find a typedef that has this class as specifier and check if it's in
              * the typesystem. */
-            type = findParentTypeAlias(classItem);
+            type = findParentClassTypeAlias(classItem);
             if (!type)
             {
                 reason = NotInTypeSystem;
@@ -1240,7 +1240,7 @@ AbstractMetaClass* AbstractMetaBuilder::currentTraversedClass(ScopeModelItem ite
         ClassModelItem classItem = model_dynamic_cast<ClassModelItem>(item);
         if (classItem)
         {
-            ComplexTypeEntry* type = findParentTypeAlias(classItem);
+            ComplexTypeEntry* type = findParentClassTypeAlias(classItem);
             if (type)
             {
                 metaClass = m_metaClasses.findClass(type->name());
