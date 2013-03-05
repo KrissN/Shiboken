@@ -930,6 +930,11 @@ AbstractMetaEnum* AbstractMetaBuilder::traverseEnum(EnumModelItem enumItem, Abst
         }
     }
 
+    if (!typeEntry)
+    {
+        typeEntry = findParentEnumTypeAlias(enumItem);
+    }
+
     QString enumName = enumItem->name();
 
     QString className;
@@ -1080,6 +1085,28 @@ ComplexTypeEntry* AbstractMetaBuilder::findParentClassTypeAlias(ClassModelItem c
             if (cmi == classItem)
             {
                 ComplexTypeEntry* type = TypeDatabase::instance()->findComplexType(tmi->name());
+                if (type)
+                {
+                    return type;
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+
+TypeEntry* AbstractMetaBuilder::findParentEnumTypeAlias(EnumModelItem enumItem)
+{
+    foreach (const TypeAliasModelItem tmi, m_dom->typeAliases())
+    {
+        CodeModelItem specItem = tmi->specifier();
+        if (specItem)
+        {
+            EnumModelItem emi = model_dynamic_cast<EnumModelItem>(specItem);
+            if (emi == enumItem)
+            {
+                TypeEntry* type = TypeDatabase::instance()->findType(tmi->name());
                 if (type)
                 {
                     return type;

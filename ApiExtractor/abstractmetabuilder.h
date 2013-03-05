@@ -237,6 +237,7 @@ private:
     void fixArgumentNames(AbstractMetaFunction* func);
     void fillAddedFunctions(AbstractMetaClass* metaClass);
     ComplexTypeEntry* findParentClassTypeAlias(ClassModelItem classItem);
+    TypeEntry* findParentEnumTypeAlias(EnumModelItem enumItem);
 
     AbstractMetaClassList m_metaClasses;
     AbstractMetaClassList m_templates;
