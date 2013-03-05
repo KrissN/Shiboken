@@ -473,12 +473,7 @@ void Binder::visitTypedef(TypedefAST *node)
     if (typespec->kind == AST::Kind_EnumSpecifier)
     {
         EnumSpecifierAST *enumspec = reinterpret_cast<EnumSpecifierAST*>(typespec);
-        name_cc.run(enumspec->name);
-        QString name = name_cc.name();
-        if (!name.isEmpty())
-        {
-            visitEnumSpecifier(enumspec);
-        }
+        specifierItem = model_dynamic_cast<CodeModelItem>(visitEnumSpecifierAndReturn(enumspec));
     }
     else if (typespec->kind == AST::Kind_ClassSpecifier)
     {
@@ -686,7 +681,7 @@ void Binder::visitUsing(UsingAST *node)
     DefaultVisitor::visitUsing(node);
 }
 
-void Binder::visitEnumSpecifier(EnumSpecifierAST *node)
+EnumModelItem Binder::visitEnumSpecifierAndReturn(EnumSpecifierAST *node)
 {
     CodeModelFinder finder(model(), this);
     ScopeModelItem scope = currentScope();
@@ -704,7 +699,8 @@ void Binder::visitEnumSpecifier(EnumSpecifierAST *node)
         name += QString::number(current);
     }
 
-    _M_current_enum = model()->create<EnumModelItem>();
+    EnumModelItem enumItem = model()->create<EnumModelItem>();
+    _M_current_enum = enumItem;
     _M_current_enum->setAccessPolicy(_M_current_access);
     updateItemPosition(_M_current_enum->toItem(), node);
     _M_current_enum->setName(name);
@@ -718,6 +714,13 @@ void Binder::visitEnumSpecifier(EnumSpecifierAST *node)
     DefaultVisitor::visitEnumSpecifier(node);
 
     _M_current_enum = 0;
+
+    return enumItem;
+}
+
+void Binder::visitEnumSpecifier(EnumSpecifierAST *node)
+{
+    visitEnumSpecifierAndReturn(node);
 }
 
 static QString strip_preprocessor_lines(const QString &name)

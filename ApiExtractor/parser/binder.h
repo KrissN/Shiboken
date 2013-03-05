@@ -99,6 +99,7 @@ private:
     void updateItemPosition(CodeModelItem item, AST *node);
 
     ClassModelItem visitClassSpecifierAndReturn(ClassSpecifierAST *);
+    EnumModelItem visitEnumSpecifierAndReturn(EnumSpecifierAST *);
 
 private:
     CodeModel *_M_model;
