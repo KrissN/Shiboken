@@ -3737,9 +3737,9 @@ void CppGenerator::writeSetterFunction(QTextStream& s, const AbstractMetaField* 
     AbstractMetaType* fieldType = metaField->type();
 
     s << INDENT << "PythonToCppFunc " << PYTHON_TO_CPP_VAR << ';' << endl;
-    s << INDENT << "if (!";
+    s << INDENT << "if (!(";
     writeTypeCheck(s, fieldType, "pyIn", isNumber(fieldType->typeEntry()));
-    s << ") {" << endl;
+    s << ")) {" << endl;
     {
         Indentation indent(INDENT);
         s << INDENT << "PyErr_SetString(PyExc_TypeError, \"wrong type attributed to '";
@@ -5059,9 +5059,9 @@ void CppGenerator::writeStdListWrapperMethods(QTextStream& s, const AbstractMeta
     writeIndexError(s, "list assignment index out of range");
 
     s << INDENT << "PythonToCppFunc " << PYTHON_TO_CPP_VAR << ';' << endl;
-    s << INDENT << "if (!";
+    s << INDENT << "if (!(";
     writeTypeCheck(s, itemType, "pyArg", isNumber(itemType->typeEntry()));
-    s << ") {" << endl;
+    s << ")) {" << endl;
     {
         Indentation indent(INDENT);
         s << INDENT << "PyErr_SetString(PyExc_TypeError, \"attributed value with wrong type, '";
